@@ -4,7 +4,7 @@ import {
   Button,
   DateInput,
   FormField,
-  LinkButton,
+  Link,
   LoadingIndicator,
   Rows,
   Select,
@@ -17,6 +17,7 @@ import type {
   DataTableLimit,
   RenderSelectionUiRequest,
 } from "@canva/intents/data";
+import { requestOpenExternalUrl } from "@canva/platform";
 import { useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -238,20 +239,42 @@ function ConnectedSelection({ token, request, onSignOut }: ConnectedProps) {
               initialRef?.kind === "transactions" ? initialRef : undefined
             }
             onSubmit={(ref) => submit(ref, request)}
+            onSignOut={onSignOut}
           />
         ) : (
           <AccountsForm
             accountCount={accounts.length}
             limit={request.limit}
             onSubmit={() => submit({ kind: "accounts" }, request)}
+            onSignOut={onSignOut}
           />
         )}
-        <Box paddingTop="1u">
-          <LinkButton onClick={onSignOut}>
-            <FormattedMessage defaultMessage="Change Up token" />
-          </LinkButton>
-        </Box>
+        <RepoFooter />
       </Rows>
+    </Box>
+  );
+}
+
+function RepoFooter() {
+  const open = () => {
+    void requestOpenExternalUrl({
+      url: "https://github.com/Haizzz/canva-up-bank",
+    });
+  };
+  return (
+    <Box paddingTop="2u">
+      <Text size="xsmall" tone="tertiary" alignment="center">
+        <FormattedMessage
+          defaultMessage="Unofficial · {link}"
+          values={{
+            link: (
+              <Link href="https://github.com/Haizzz/canva-up-bank" requestOpenExternalUrl={open}>
+                github.com/Haizzz/canva-up-bank
+              </Link>
+            ),
+          }}
+        />
+      </Text>
     </Box>
   );
 }
@@ -310,6 +333,7 @@ type TransactionsFormProps = {
   onSubmit: (
     ref: Extract<SourceRef, { kind: "transactions" }>,
   ) => Promise<{ ok: true } | { ok: false; message: string }>;
+  onSignOut: () => void;
 };
 
 function TransactionsForm({
@@ -319,6 +343,7 @@ function TransactionsForm({
   limit,
   initial,
   onSubmit,
+  onSignOut,
 }: TransactionsFormProps) {
   const intl = useIntl();
   const [accountId, setAccountId] = useState<string>(initial?.accountId ?? "");
@@ -491,6 +516,14 @@ function TransactionsForm({
       >
         {intl.formatMessage({ defaultMessage: "Preview transactions" })}
       </Button>
+      <Button
+        variant="tertiary"
+        onClick={onSignOut}
+        disabled={submitting}
+        stretch
+      >
+        {intl.formatMessage({ defaultMessage: "Change Up token" })}
+      </Button>
     </Rows>
   );
 }
@@ -499,9 +532,15 @@ type AccountsFormProps = {
   accountCount: number;
   limit: DataTableLimit;
   onSubmit: () => Promise<{ ok: true } | { ok: false; message: string }>;
+  onSignOut: () => void;
 };
 
-function AccountsForm({ accountCount, limit, onSubmit }: AccountsFormProps) {
+function AccountsForm({
+  accountCount,
+  limit,
+  onSubmit,
+  onSignOut,
+}: AccountsFormProps) {
   const intl = useIntl();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -543,6 +582,14 @@ function AccountsForm({ accountCount, limit, onSubmit }: AccountsFormProps) {
         stretch
       >
         {intl.formatMessage({ defaultMessage: "Import account balances" })}
+      </Button>
+      <Button
+        variant="tertiary"
+        onClick={onSignOut}
+        disabled={submitting}
+        stretch
+      >
+        {intl.formatMessage({ defaultMessage: "Change Up token" })}
       </Button>
     </Rows>
   );
