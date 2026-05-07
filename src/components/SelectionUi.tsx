@@ -154,13 +154,19 @@ function ConnectedSelection({ token, request, onSignOut }: ConnectedProps) {
             intl.formatMessage({
               defaultMessage:
                 "Couldn't reach api.up.com.au. Check your connection and retry.",
+              description:
+                "Error shown when the initial Up data load (accounts/categories/tags) fails due to network.",
             }),
           );
         } else {
           setLoadError(
             err instanceof Error
               ? err.message
-              : intl.formatMessage({ defaultMessage: "Failed to load Up data." }),
+              : intl.formatMessage({
+                  defaultMessage: "Failed to load Up data.",
+                  description:
+                    "Generic error shown when initial Up data load fails for an unknown reason.",
+                }),
           );
         }
       } finally {
@@ -179,6 +185,8 @@ function ConnectedSelection({ token, request, onSignOut }: ConnectedProps) {
         banner={intl.formatMessage({
           defaultMessage:
             "Your Up token was rejected. Generate a new one in the Up app.",
+          description:
+            "Banner shown when an HTTP 401 is returned during the initial data load, prompting the user to re-enter their token.",
         })}
         onSaved={() => onSignOut()}
       />
@@ -199,7 +207,11 @@ function ConnectedSelection({ token, request, onSignOut }: ConnectedProps) {
         <Rows spacing="2u">
           <Alert tone="critical">{loadError}</Alert>
           <Button variant="secondary" onClick={onSignOut} stretch>
-            {intl.formatMessage({ defaultMessage: "Change Up token" })}
+            {intl.formatMessage({
+              defaultMessage: "Change Up token",
+              description:
+                "Button to forget the saved Up Personal Access Token and prompt the user to enter a new one.",
+            })}
           </Button>
         </Rows>
       </Box>
@@ -212,18 +224,29 @@ function ConnectedSelection({ token, request, onSignOut }: ConnectedProps) {
     <Box paddingX="3u" paddingY="2u">
       <Rows spacing="2u">
         <Title size="small">
-          <FormattedMessage defaultMessage="Up Bank" />
+          <FormattedMessage
+            defaultMessage="Up Bank"
+            description="Title of the side panel; the brand name of the Up Banking product."
+          />
         </Title>
         {banner ? <Alert tone="warn">{banner}</Alert> : null}
         <SegmentedControl
           options={[
             {
               value: "transactions",
-              label: intl.formatMessage({ defaultMessage: "Transactions" }),
+              label: intl.formatMessage({
+                defaultMessage: "Transactions",
+                description:
+                  "Mode toggle option: shows the form for importing a list of transactions.",
+              }),
             },
             {
               value: "accounts",
-              label: intl.formatMessage({ defaultMessage: "Accounts" }),
+              label: intl.formatMessage({
+                defaultMessage: "Accounts",
+                description:
+                  "Mode toggle option: shows the form for importing account balances.",
+              }),
             },
           ]}
           value={mode}
@@ -266,9 +289,13 @@ function RepoFooter() {
       <Text size="xsmall" tone="tertiary" alignment="center">
         <FormattedMessage
           defaultMessage="Unofficial · {link}"
+          description="Footer text indicating this is an unofficial app, followed by a link to the source code."
           values={{
             link: (
-              <Link href="https://github.com/Haizzz/canva-up-bank" requestOpenExternalUrl={open}>
+              <Link
+                href="https://github.com/Haizzz/canva-up-bank"
+                requestOpenExternalUrl={open}
+              >
                 github.com/Haizzz/canva-up-bank
               </Link>
             ),
@@ -383,27 +410,50 @@ function TransactionsForm({
 
   const allAccountsLabel = intl.formatMessage({
     defaultMessage: "All accounts",
+    description:
+      "Default option in the account selector meaning 'do not filter by account'.",
   });
   const anyCategoryLabel = intl.formatMessage({
     defaultMessage: "Any category",
+    description:
+      "Default option in the category selector meaning 'do not filter by category'.",
   });
-  const anyTagLabel = intl.formatMessage({ defaultMessage: "Any tag" });
-  const anyStatusLabel = intl.formatMessage({ defaultMessage: "Any" });
-  const settledLabel = intl.formatMessage({ defaultMessage: "Settled" });
-  const heldLabel = intl.formatMessage({ defaultMessage: "Held" });
+  const anyTagLabel = intl.formatMessage({
+    defaultMessage: "Any tag",
+    description:
+      "Default option in the tag selector meaning 'do not filter by tag'.",
+  });
+  const anyStatusLabel = intl.formatMessage({
+    defaultMessage: "Any",
+    description:
+      "Status filter option meaning 'include both held and settled transactions'.",
+  });
+  const settledLabel = intl.formatMessage({
+    defaultMessage: "Settled",
+    description: "Status filter option for settled (finalized) transactions.",
+  });
+  const heldLabel = intl.formatMessage({
+    defaultMessage: "Held",
+    description: "Status filter option for held (pending) transactions.",
+  });
 
   return (
     <Rows spacing="2u">
       <Text size="small">
         <FormattedMessage
           defaultMessage="Imports up to {n} transactions, newest first."
+          description="Helper text under the Transactions tab heading explaining the row limit."
           values={{ n: limit.row.toLocaleString() }}
         />
       </Text>
       <FormField
-        label={intl.formatMessage({ defaultMessage: "Account" })}
+        label={intl.formatMessage({
+          defaultMessage: "Account",
+          description: "Label for the account selector dropdown.",
+        })}
         description={intl.formatMessage({
           defaultMessage: "Leave empty to include all accounts.",
+          description: "Hint under the account selector explaining the empty value.",
         })}
         value={accountId}
         control={(props) => (
@@ -423,7 +473,11 @@ function TransactionsForm({
         )}
       />
       <FormField<DateObj>
-        label={intl.formatMessage({ defaultMessage: "From" })}
+        label={intl.formatMessage({
+          defaultMessage: "From",
+          description:
+            "Label for the start-date picker in the transactions filter form.",
+        })}
         value={since}
         control={() => (
           <DateInput
@@ -432,12 +486,20 @@ function TransactionsForm({
             max={until ?? today}
             onChange={(v) => setSince(v)}
             onChangeComplete={(v) => setSince(v)}
-            ariaLabel={intl.formatMessage({ defaultMessage: "From date" })}
+            ariaLabel={intl.formatMessage({
+              defaultMessage: "From date",
+              description:
+                "Accessibility label for the start-date picker in the transactions filter.",
+            })}
           />
         )}
       />
       <FormField<DateObj>
-        label={intl.formatMessage({ defaultMessage: "To" })}
+        label={intl.formatMessage({
+          defaultMessage: "To",
+          description:
+            "Label for the end-date picker in the transactions filter form.",
+        })}
         value={until}
         control={() => (
           <DateInput
@@ -447,12 +509,20 @@ function TransactionsForm({
             max={today}
             onChange={(v) => setUntil(v)}
             onChangeComplete={(v) => setUntil(v)}
-            ariaLabel={intl.formatMessage({ defaultMessage: "To date" })}
+            ariaLabel={intl.formatMessage({
+              defaultMessage: "To date",
+              description:
+                "Accessibility label for the end-date picker in the transactions filter.",
+            })}
           />
         )}
       />
       <FormField
-        label={intl.formatMessage({ defaultMessage: "Status" })}
+        label={intl.formatMessage({
+          defaultMessage: "Status",
+          description:
+            "Label for the transaction status segmented control (Any / Settled / Held).",
+        })}
         value={status}
         control={() => (
           <SegmentedControl
@@ -468,7 +538,11 @@ function TransactionsForm({
       />
       {categories.length > 0 ? (
         <FormField
-          label={intl.formatMessage({ defaultMessage: "Category" })}
+          label={intl.formatMessage({
+            defaultMessage: "Category",
+            description:
+              "Label for the transaction category selector dropdown.",
+          })}
           value={category}
           control={(props) => (
             <Select<string>
@@ -490,7 +564,10 @@ function TransactionsForm({
       ) : null}
       {tags.length > 0 ? (
         <FormField
-          label={intl.formatMessage({ defaultMessage: "Tag" })}
+          label={intl.formatMessage({
+            defaultMessage: "Tag",
+            description: "Label for the transaction tag selector dropdown.",
+          })}
           value={tag}
           control={(props) => (
             <Select<string>
@@ -514,7 +591,11 @@ function TransactionsForm({
         disabled={submitting}
         stretch
       >
-        {intl.formatMessage({ defaultMessage: "Preview transactions" })}
+        {intl.formatMessage({
+          defaultMessage: "Preview transactions",
+          description:
+            "Primary button on the Transactions tab; runs the query and previews matching transactions.",
+        })}
       </Button>
       <Button
         variant="tertiary"
@@ -522,7 +603,11 @@ function TransactionsForm({
         disabled={submitting}
         stretch
       >
-        {intl.formatMessage({ defaultMessage: "Change Up token" })}
+        {intl.formatMessage({
+          defaultMessage: "Change Up token",
+          description:
+            "Secondary action on the Transactions tab; clears the saved token and returns to the setup screen.",
+        })}
       </Button>
     </Rows>
   );
@@ -557,11 +642,15 @@ function AccountsForm({
   return (
     <Rows spacing="2u">
       <Text size="small">
-        <FormattedMessage defaultMessage="Imports a snapshot of all your Up accounts: name, type, ownership, balance, currency, and creation date." />
+        <FormattedMessage
+          defaultMessage="Imports a snapshot of all your Up accounts: name, type, ownership, balance, currency, and creation date."
+          description="Helper text on the Accounts tab describing what columns the import will produce."
+        />
       </Text>
       <Text size="small">
         <FormattedMessage
           defaultMessage="You currently have {count, plural, one {# account} other {# accounts}}."
+          description="Status line showing how many Up accounts the user has."
           values={{ count: accountCount }}
         />
       </Text>
@@ -569,6 +658,7 @@ function AccountsForm({
         <Alert tone="warn">
           <FormattedMessage
             defaultMessage="You have more accounts ({count}) than Canva's row limit ({rowLimit}). Only the first {rowLimit} will be imported."
+            description="Warning shown when the user has more Up accounts than Canva will accept in a single import."
             values={{ count: accountCount, rowLimit: limit.row }}
           />
         </Alert>
@@ -581,7 +671,11 @@ function AccountsForm({
         disabled={submitting}
         stretch
       >
-        {intl.formatMessage({ defaultMessage: "Import account balances" })}
+        {intl.formatMessage({
+          defaultMessage: "Import account balances",
+          description:
+            "Primary button on the Accounts tab; imports a snapshot of account balances.",
+        })}
       </Button>
       <Button
         variant="tertiary"
@@ -589,7 +683,11 @@ function AccountsForm({
         disabled={submitting}
         stretch
       >
-        {intl.formatMessage({ defaultMessage: "Change Up token" })}
+        {intl.formatMessage({
+          defaultMessage: "Change Up token",
+          description:
+            "Secondary action on the Accounts tab; clears the saved token and returns to the setup screen.",
+        })}
       </Button>
     </Rows>
   );

@@ -65,7 +65,10 @@ export function PatSetup({ banner, onSaved }: Props) {
         setError(err.message);
       } else {
         setError(
-          intl.formatMessage({ defaultMessage: "Something went wrong." }),
+          intl.formatMessage({
+            defaultMessage: "Something went wrong.",
+            description: "Generic fallback error message.",
+          }),
         );
       }
     } finally {
@@ -81,77 +84,103 @@ export function PatSetup({ banner, onSaved }: Props) {
     <Box paddingX="3u" paddingY="2u">
       <Rows spacing="2u">
         <Title size="small">
-          <FormattedMessage defaultMessage="Connect your Up account" />
-        </Title>
-      <Text size="small">
-        <FormattedMessage
-          defaultMessage="This app reads your Up data using a {link}. The token stays in your browser's local storage and is sent directly to api.up.com.au, never to a third-party server."
-          values={{
-            link: (
-              <Link
-                href="https://api.up.com.au"
-                requestOpenExternalUrl={openUpApiPage}
-              >
-                <FormattedMessage defaultMessage="Personal Access Token" />
-              </Link>
-            ),
-          }}
-        />
-      </Text>
-      <Text size="small">
-        <FormattedMessage
-          defaultMessage="To get a token: open the Up app on your phone, swipe right, tap {a}, then {b}, then {c}."
-          values={{
-            a: (
-              <strong>
-                <FormattedMessage defaultMessage="Data sharing" />
-              </strong>
-            ),
-            b: (
-              <strong>
-                <FormattedMessage defaultMessage="Personal Access Token" />
-              </strong>
-            ),
-            c: (
-              <strong>
-                <FormattedMessage defaultMessage="Generate a token" />
-              </strong>
-            ),
-          }}
-        />
-      </Text>
-      {banner ? <Alert tone="warn">{banner}</Alert> : null}
-      <FormField
-        label={intl.formatMessage({ defaultMessage: "Personal Access Token" })}
-        description={intl.formatMessage({
-          defaultMessage: "Starts with up:yeah:",
-        })}
-        value={token}
-        control={(props) => (
-          <MultilineInput
-            {...props}
-            placeholder="up:yeah:..."
-            value={token}
-            onChange={(value) => {
-              setToken(value);
-              if (error) setError(null);
-            }}
-            minRows={2}
-            maxRows={4}
-            autoGrow
+          <FormattedMessage
+            defaultMessage="Connect your Up account"
+            description="Heading shown on the first-run Personal Access Token setup screen."
           />
-        )}
-      />
-      {error ? <Alert tone="critical">{error}</Alert> : null}
-      <Button
-        variant="primary"
-        onClick={handleVerify}
-        disabled={!token.trim() || verifying}
-        loading={verifying}
-        stretch
-      >
-        {intl.formatMessage({ defaultMessage: "Verify and save" })}
-      </Button>
+        </Title>
+        <Text size="small">
+          <FormattedMessage
+            defaultMessage="This app reads your Up data using a {link}. The token stays in your browser's local storage and is sent directly to api.up.com.au, never to a third-party server."
+            description="Intro paragraph explaining how the app authenticates with Up."
+            values={{
+              link: (
+                <Link
+                  href="https://api.up.com.au"
+                  requestOpenExternalUrl={openUpApiPage}
+                >
+                  <FormattedMessage
+                    defaultMessage="Personal Access Token"
+                    description="Inline link text inside the intro paragraph; opens api.up.com.au."
+                  />
+                </Link>
+              ),
+            }}
+          />
+        </Text>
+        <Text size="small">
+          <FormattedMessage
+            defaultMessage="To get a token: open the Up app on your phone, swipe right, tap {a}, then {b}, then {c}."
+            description="Step-by-step instructions for generating a Personal Access Token in the Up mobile app."
+            values={{
+              a: (
+                <strong>
+                  <FormattedMessage
+                    defaultMessage="Data sharing"
+                    description="Name of the menu in the Up mobile app where you generate a token."
+                  />
+                </strong>
+              ),
+              b: (
+                <strong>
+                  <FormattedMessage
+                    defaultMessage="Personal Access Token"
+                    description="Name of the option inside the Up mobile app's Data sharing menu."
+                  />
+                </strong>
+              ),
+              c: (
+                <strong>
+                  <FormattedMessage
+                    defaultMessage="Generate a token"
+                    description="Label of the button you tap inside the Up app to create a new token."
+                  />
+                </strong>
+              ),
+            }}
+          />
+        </Text>
+        {banner ? <Alert tone="warn">{banner}</Alert> : null}
+        <FormField
+          label={intl.formatMessage({
+            defaultMessage: "Personal Access Token",
+            description: "Form field label for the Up Personal Access Token textarea.",
+          })}
+          description={intl.formatMessage({
+            defaultMessage: "Starts with up:yeah:",
+            description:
+              "Hint shown under the token input describing the expected token prefix.",
+          })}
+          value={token}
+          control={(props) => (
+            <MultilineInput
+              {...props}
+              placeholder="up:yeah:..."
+              value={token}
+              onChange={(value) => {
+                setToken(value);
+                if (error) setError(null);
+              }}
+              minRows={2}
+              maxRows={4}
+              autoGrow
+            />
+          )}
+        />
+        {error ? <Alert tone="critical">{error}</Alert> : null}
+        <Button
+          variant="primary"
+          onClick={handleVerify}
+          disabled={!token.trim() || verifying}
+          loading={verifying}
+          stretch
+        >
+          {intl.formatMessage({
+            defaultMessage: "Verify and save",
+            description:
+              "Primary button on the token setup screen; pings Up to validate the token and saves it.",
+          })}
+        </Button>
       </Rows>
     </Box>
   );

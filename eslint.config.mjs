@@ -12,11 +12,11 @@ export default [
   },
   ...canvaPlugin.configs.apps,
   {
-    // This is a private/learning app with no translation pipeline, so we
-    // don't enforce translator-oriented metadata. Strings still go through
-    // FormattedMessage / intl.formatMessage so they're easy to extract later.
+    // We use FormattedMessage / intl.formatMessage everywhere with descriptions
+    // for the translators. The two rules below are template defaults that
+    // were too noisy for our small, mostly-English internal-style strings;
+    // we keep them off but enforce-description stays on for submission.
     rules: {
-      "formatjs/enforce-description": "off",
       "formatjs/no-literal-string-in-jsx": "off",
       "formatjs/no-literal-string-in-object": "off",
     },
